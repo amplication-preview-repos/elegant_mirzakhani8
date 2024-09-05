@@ -1,0 +1,67 @@
+datasource db {
+  provider = "mongodb"
+  url      = env("DB_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model PropertyName {
+  createdAt DateTime @default(now())
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  updatedAt DateTime @updatedAt
+}
+
+model Property {
+  address      String?
+  appointments Appointment[]
+  available    Boolean?
+  city         String?
+  createdAt    DateTime      @default(now())
+  description  String?
+  id           String        @id @default(auto()) @map("_id") @db.ObjectId
+  price        Float?
+  state        String?
+  updatedAt    DateTime      @updatedAt
+  zipCode      String?
+}
+
+model Appointment {
+  client     Client?                @relation(fields: [clientId], references: [id])
+  clientId   String?                @db.ObjectId
+  createdAt  DateTime               @default(now())
+  dateTime   DateTime?
+  id         String                 @id @default(auto()) @map("_id") @db.ObjectId
+  property   Property?              @relation(fields: [propertyId], references: [id])
+  propertyId String?                @db.ObjectId
+  status     EnumAppointmentStatus?
+  updatedAt  DateTime               @updatedAt
+}
+
+model Client {
+  appointments Appointment[]
+  createdAt    DateTime      @default(now())
+  email        String?
+  firstName    String?
+  id           String        @id @default(auto()) @map("_id") @db.ObjectId
+  lastName     String?
+  phoneNumber  String?
+  updatedAt    DateTime      @updatedAt
+}
+
+model User {
+  createdAt DateTime @default(now())
+  email     String?  @unique
+  firstName String?
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  lastName  String?
+  password  String
+  roles     Json
+  updatedAt DateTime @updatedAt
+  username  String   @unique
+}
+
+enum EnumAppointmentStatus {
+  Option1
+}
